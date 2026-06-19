@@ -1,0 +1,33 @@
+{
+  "name": "__PROJECT_NAME__",
+  "displayName": "__PROJECT_NAME__",
+  "description": "A Vednon extension.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "__PROJECT_NAME__.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "scripts": {
+    "dev": "npm run compile && \"${VEDNON_BIN:-vednon}\" --extensionDevelopmentPath=\"$PWD\"",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.70.0",
+    "typescript": "^5.4.0"
+  }
+}

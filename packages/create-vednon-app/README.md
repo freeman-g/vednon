@@ -1,8 +1,8 @@
 # create-vednon-app
 
-A small `create-vite`-style scaffolder for **Vednon** (the de-developed VS Code fork in this
-repo). It creates a new workspace folder from a template; you then open that folder in the
-Vednon build with `./scripts/code.sh`.
+A `create-vue`-style scaffolder for **Vednon** (the de-developed VS Code fork in this repo).
+It generates a small, runnable **VS Code extension** project — the unit you build on top of
+the Vednon chassis — so you can `npm install`, run it, and start editing.
 
 ## Usage
 
@@ -14,26 +14,35 @@ Run from the repo root.
 node ./packages/create-vednon-app/index.js my-app --template blank
 ```
 
-`-t` is shorthand for `--template`.
+`-t` is shorthand for `--template`. With a single template installed, `--template` is
+optional.
 
 ### Interactive
 
-Run with no arguments (or omit either the name or the template) and you'll be prompted:
+Run with no arguments and you'll be prompted for a project name (the template is chosen
+automatically when only one exists):
 
 ```bash
 node ./packages/create-vednon-app/index.js
 # → Project name: …
-# → Select a template: › blank
 ```
 
-### Open the scaffolded workspace
+### Run the generated extension
 
 ```bash
-./scripts/code.sh my-app
+cd my-app
+npm install
+export VEDNON_BIN="/path/to/vednon/scripts/code.sh"   # your Vednon launcher
+npm run dev
 ```
 
-This opens the folder in the de-deved Vednon window (stripped developer UI, full extension
-host + MCP intact).
+`npm run dev` compiles the extension and launches it in a Vednon window. Run **Hello World**
+from the Command Palette to confirm it loaded, then edit `src/extension.ts`. (`VEDNON_BIN`
+defaults to a `vednon` command on PATH; in dev it's the fork's `code.sh`. Or just open the
+folder and press `F5`.)
+
+> The Vednon editor is the runtime the extension runs in — like a browser for a web app — so
+> it isn't bundled into the scaffold; you point `npm run dev` at an existing Vednon build.
 
 ## Templates
 
@@ -42,7 +51,7 @@ folder there — it shows up in the CLI automatically.
 
 | Template | Contents |
 |---|---|
-| `blank` | `vednon.json` (workspace config), `README.md`, `.gitignore`. A minimal, usable Vednon workspace. |
+| `blank` | A minimal, unopinionated VS Code extension: `package.json` manifest with one `helloWorld` command, `src/extension.ts`, `tsconfig.json`, `.vscode/{launch,tasks}.json`, `.vscodeignore`, `.gitignore`, `README.md`. |
 
 ## How it works
 
@@ -51,9 +60,3 @@ folder there — it shows up in the CLI automatically.
   `.html`, `.txt`, and `.gitignore`).
 - Renames `_gitignore` → `.gitignore` on copy (the create-vite convention).
 - No templating engine, no remote download, no `git init`, no package-manager detection (v1).
-
-## Notes
-
-- A future starter-app template (e.g. a "title-abstractor" example that bundles the
-  form-rendering extension) is planned but intentionally out of scope for this commit — see
-  `DECISIONS_NEEDED.md`.

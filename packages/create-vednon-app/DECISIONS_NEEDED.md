@@ -3,32 +3,35 @@
 Open product decisions hit while building the v1 scaffolder. Each was resolved with a
 reasonable default so work could proceed; flagging here for confirmation.
 
-## 1. What is a scaffolded project? (resolved: a workspace folder, not a fork copy)
+## 1. What does a scaffolded project contain? (resolved: a runnable VS Code extension)
 
-The original goal said the CLI creates "a working copy of the de-deved nondev fork," but also
-that the result is "launched via `./scripts/code.sh <dir>`" — i.e. the existing fork opens
-`<dir>` as a **workspace folder**. Those two readings conflict (a full fork copy wouldn't be
-opened as a folder by the repo's own `code.sh`).
+Modeled on `npm create vue@latest`: the CLI generates a **small, runnable project you jump
+into and extend**. For Vednon, the thing you build on top of the chassis is a **VS Code
+extension**, so the `blank` template is a minimal, unopinionated extension (a single
+`helloWorld` command + the standard `package.json` / `tsconfig.json` / `src/extension.ts` /
+`.vscode` run config). No artifacts, no `vednon.json`, no opinions.
 
-**Default chosen:** a scaffolded project is a **workspace folder** that the de-deved Vednon
-fork opens — analogous to what `create-vite` produces (a small app dir, not a copy of Vite
-itself). The "de-deved" experience comes from the fork build (the
-`product.vednon.hideDeveloperUI` flag), so any folder opened in the fork already gets the
-stripped chassis. The scaffold just seeds the folder with a `vednon.json` config and starter
-content.
+The de-deved chassis itself is *not* copied into each project — it lives in the fork. A
+scaffolded extension is run against that chassis via `F5` (Extension Development Host) or
+`./scripts/code.sh --extensionDevelopmentPath=<dir>`.
+
+(Supersedes the earlier "scaffold = workspace folder of artifacts" interpretation, which was
+the wrong model.)
 
 ## 2. CLI package name (resolved: `create-vednon-app`)
 
-Renamed from the goal's working path `create-nondev-app` to **`create-vednon-app`** to match
-the product brand and the `npm create vednon-app` convention.
+Named **`create-vednon-app`** to match the product brand and the `npm create vednon-app`
+convention.
 
-## 3. Starter-app template scope (deferred to a later commit)
+## 3. Running an extension in the de-deved chassis
 
-A `title-abstractor` template that additionally bundles the form-rendering extension and a
-sample `matters/example.matter.json` was prototyped, but it is **not part of this commit** —
-it embeds an example extension whose auto-activation story isn't settled (VS Code does not
-auto-load an extension just because its source sits in an opened workspace folder).
+The chassis hides the Run/Debug UI, so `F5` may not surface in a Vednon window. The generated
+README documents the CLI launch (`code.sh --extensionDevelopmentPath`) as the reliable path.
+Open question for later: should Vednon expose a first-class "run this extension" affordance for
+developers, or is the CLI launch enough?
 
-When revisited, the open question is how the bundled extension gets activated: via the
-`vednon-shell` `starterApp` hook (already stubbed in the fork), or a documented
-`--extensionDevelopmentPath` launch. For now the CLI ships **`blank` only**.
+## 4. Future templates (out of scope for now)
+
+Only `blank` ships today. Opinionated starters (e.g. a webview-app template, or a vertical
+example) can be added later as sibling folders under `templates/`; the CLI discovers them
+automatically and will prompt for a choice once more than one exists.

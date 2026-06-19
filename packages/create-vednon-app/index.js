@@ -128,7 +128,8 @@ async function main() {
 				: 'Use letters, numbers, dot, dash or underscore (and not starting with a dot).'
 		});
 	}
-	if (!template) {
+	// Only prompt for a template when there's a real choice; otherwise use the only one.
+	if (!template && templates.length > 1) {
 		questions.push({
 			type: 'select',
 			name: 'template',
@@ -136,6 +137,8 @@ async function main() {
 			choices: templates.map(name => ({ title: name, value: name })),
 			initial: 0
 		});
+	} else if (!template) {
+		template = templates[0];
 	}
 
 	if (questions.length > 0) {
@@ -164,9 +167,15 @@ async function main() {
 	copyTemplate(path.join(TEMPLATES_DIR, template), destDir, projectName);
 
 	const rel = path.relative(process.cwd(), destDir) || projectName;
+	const codeScript = path.resolve(__dirname, '..', '..', 'scripts', 'code.sh');
+
 	console.log(`\nScaffolded "${projectName}" from template "${template}".`);
 	console.log(`\nNext steps:`);
-	console.log(`  ./scripts/code.sh ${rel}`);
+	console.log(`  cd ${rel}`);
+	console.log(`  npm install`);
+	console.log(`  export VEDNON_BIN="${codeScript}"   # your Vednon launcher (set once)`);
+	console.log(`  npm run dev`);
+	console.log(`\n(or open the folder in Vednon and press F5 to run the extension)`);
 	console.log('');
 }
 
