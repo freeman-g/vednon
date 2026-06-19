@@ -21,6 +21,7 @@ import { Codicon } from '../../../../base/common/codicons.js';
 import { registerIcon } from '../../../../platform/theme/common/iconRegistry.js';
 import { ILocalizedString } from '../../../../platform/action/common/action.js';
 import { URI } from '../../../../base/common/uri.js';
+import product from '../../../../platform/product/common/product.js';
 
 const timelineViewIcon = registerIcon('timeline-view-icon', Codicon.history, localize('timelineViewIcon', 'View icon of the timeline view.'));
 const timelineOpenIcon = registerIcon('timeline-open', Codicon.history, localize('timelineOpenIcon', 'Icon for the open timeline action.'));
@@ -62,7 +63,10 @@ configurationRegistry.registerConfiguration({
 	}
 });
 
-Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([new TimelinePaneDescriptor()], VIEW_CONTAINER);
+// Vednon blank chassis: don't register the Timeline view. Reversible via product.vednon.hideDeveloperUI.
+if (!product.vednon?.hideDeveloperUI) {
+	Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([new TimelinePaneDescriptor()], VIEW_CONTAINER);
+}
 
 namespace OpenTimelineAction {
 

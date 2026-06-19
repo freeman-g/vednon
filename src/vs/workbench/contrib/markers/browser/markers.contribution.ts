@@ -14,6 +14,7 @@ import { Marker, RelatedInformation, ResourceMarkers } from './markersModel.js';
 import { MarkersView } from './markersView.js';
 import { MenuId, registerAction2, Action2 } from '../../../../platform/actions/common/actions.js';
 import { Registry } from '../../../../platform/registry/common/platform.js';
+import product from '../../../../platform/product/common/product.js';
 import { MarkersViewMode, Markers, MarkersContextKeys } from '../common/markers.js';
 import Messages from './messages.js';
 import { IWorkbenchContributionsRegistry, Extensions as WorkbenchExtensions, IWorkbenchContribution, registerWorkbenchContribution2, WorkbenchPhase } from '../../../common/contributions.js';
@@ -689,7 +690,10 @@ class MarkersStatusBarContributions extends Disposable implements IWorkbenchCont
 	}
 }
 
-workbenchRegistry.registerWorkbenchContribution(MarkersStatusBarContributions, LifecyclePhase.Restored);
+// Vednon blank chassis: omit the Problems (errors/warnings) status-bar item. Reversible via product.vednon.hideDeveloperUI.
+if (!product.vednon?.hideDeveloperUI) {
+	workbenchRegistry.registerWorkbenchContribution(MarkersStatusBarContributions, LifecyclePhase.Restored);
+}
 
 registerWorkbenchContribution2(MarkerChatContextContribution.ID, MarkerChatContextContribution, WorkbenchPhase.AfterRestored);
 

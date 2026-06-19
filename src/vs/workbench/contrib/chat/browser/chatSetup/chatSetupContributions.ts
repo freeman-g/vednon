@@ -86,6 +86,12 @@ export class ChatSetupContribution extends Disposable implements IWorkbenchContr
 	) {
 		super();
 
+		// Vednon blank chassis: skip all Copilot chat onboarding (sign-in welcome,
+		// title-bar sign-in entry, setup agents). Reversible via product.vednon.hideDeveloperUI.
+		if (product.vednon?.hideDeveloperUI) {
+			return;
+		}
+
 		const context = chatEntitlementService.context?.value;
 		const requests = chatEntitlementService.requests?.value;
 		if (!context || !requests) {

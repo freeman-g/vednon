@@ -8,6 +8,7 @@ import { localize, localize2 } from '../../../../nls.js';
 import { IMenuService, MenuId, IMenu, SubmenuItemAction, registerAction2, Action2, MenuItemAction } from '../../../../platform/actions/common/actions.js';
 import { MenuBarVisibility, IWindowOpenable, getMenuBarVisibility, MenuSettings, hasNativeMenu } from '../../../../platform/window/common/window.js';
 import { IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js';
+import product from '../../../../platform/product/common/product.js';
 import { IAction, Action, SubmenuAction, Separator, IActionRunner, ActionRunner, WorkbenchActionExecutedEvent, WorkbenchActionExecutedClassification, toAction } from '../../../../base/common/actions.js';
 import { addDisposableListener, Dimension, EventType } from '../../../../base/browser/dom.js';
 import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
@@ -129,9 +130,15 @@ export abstract class MenubarControl extends Disposable {
 		this.menus = {};
 		this.topLevelTitles = {};
 
+		// Vednon blank chassis: drop developer top-level menus. Reversible via product.vednon.hideDeveloperUI.
+		const hiddenMenus = product.vednon?.hideDeveloperUI ? new Set(['Run', 'Terminal']) : undefined;
+
 		const [, mainMenuActions] = this.mainMenu.getActions()[0];
 		for (const mainMenuAction of mainMenuActions) {
 			if (mainMenuAction instanceof SubmenuItemAction && typeof mainMenuAction.item.title !== 'string') {
+				if (hiddenMenus?.has(mainMenuAction.item.title.original)) {
+					continue;
+				}
 				this.menus[mainMenuAction.item.title.original] = this.mainMenuDisposables.add(this.menuService.createMenu(mainMenuAction.item.submenu, this.contextKeyService, { emitEventsForSubmenuChanges: true }));
 				this.topLevelTitles[mainMenuAction.item.title.original] = mainMenuAction.item.title.mnemonicTitle ?? mainMenuAction.item.title.value;
 			}

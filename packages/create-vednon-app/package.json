@@ -1,0 +1,21 @@
+{
+  "name": "create-vednon-app",
+  "version": "0.1.0",
+  "description": "Scaffold a new Vednon (de-deved VS Code fork) workspace from a template.",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "create-vednon-app": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "prompts": "^2.4.2"
+  }
+}

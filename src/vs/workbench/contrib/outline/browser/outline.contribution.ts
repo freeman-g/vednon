@@ -7,6 +7,7 @@ import { localize, localize2 } from '../../../../nls.js';
 import { IViewsRegistry, Extensions as ViewExtensions } from '../../../common/views.js';
 import { OutlinePane } from './outlinePane.js';
 import { Registry } from '../../../../platform/registry/common/platform.js';
+import product from '../../../../platform/product/common/product.js';
 import { IConfigurationRegistry, Extensions as ConfigurationExtensions, ConfigurationScope } from '../../../../platform/configuration/common/configurationRegistry.js';
 import { VIEW_CONTAINER } from '../../files/browser/explorerViewlet.js';
 import { SyncDescriptor } from '../../../../platform/instantiation/common/descriptors.js';
@@ -23,19 +24,22 @@ import './outlineActions.js';
 
 const outlineViewIcon = registerIcon('outline-view-icon', Codicon.symbolClass, localize('outlineViewIcon', 'View icon of the outline view.'));
 
-Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([{
-	id: IOutlinePane.Id,
-	name: localize2('name', "Outline"),
-	containerIcon: outlineViewIcon,
-	ctorDescriptor: new SyncDescriptor(OutlinePane),
-	canToggleVisibility: true,
-	canMoveView: true,
-	hideByDefault: false,
-	collapsed: true,
-	order: 2,
-	weight: 30,
-	focusCommand: { id: 'outline.focus' }
-}], VIEW_CONTAINER);
+// Vednon blank chassis: don't register the Outline view. Reversible via product.vednon.hideDeveloperUI.
+if (!product.vednon?.hideDeveloperUI) {
+	Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([{
+		id: IOutlinePane.Id,
+		name: localize2('name', "Outline"),
+		containerIcon: outlineViewIcon,
+		ctorDescriptor: new SyncDescriptor(OutlinePane),
+		canToggleVisibility: true,
+		canMoveView: true,
+		hideByDefault: false,
+		collapsed: true,
+		order: 2,
+		weight: 30,
+		focusCommand: { id: 'outline.focus' }
+	}], VIEW_CONTAINER);
+}
 
 // --- configurations
 

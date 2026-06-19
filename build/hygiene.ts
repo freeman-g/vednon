@@ -87,13 +87,8 @@ export function hygiene(some: NodeJS.ReadWriteStream | string[] | undefined, run
 	let errorCount = 0;
 
 	const productJson = es.through(function (file: VinylFile) {
-		const product = JSON.parse(file.contents!.toString('utf8'));
-
-		if (product.extensionsGallery) {
-			console.error(`product.json: Contains 'extensionsGallery'`);
-			errorCount++;
-		}
-
+		// Vednon intentionally ships an Open VSX `extensionsGallery` in product.json;
+		// the upstream check that forbids a gallery in product.json is disabled for this fork.
 		this.emit('data', file);
 	});
 

@@ -8,6 +8,7 @@ import { ActionsOrientation } from '../../../base/browser/ui/actionbar/actionbar
 import { IActivityService } from '../../services/activity/common/activity.js';
 import { IWorkbenchLayoutService, Parts } from '../../services/layout/browser/layoutService.js';
 import { IInstantiationService } from '../../../platform/instantiation/common/instantiation.js';
+import product from '../../../platform/product/common/product.js';
 import { IDisposable, DisposableStore, Disposable, DisposableMap, combinedDisposable } from '../../../base/common/lifecycle.js';
 import { IColorTheme } from '../../../platform/theme/common/themeService.js';
 import { CompositeBar, ICompositeBarItem, CompositeDragAndDrop } from './compositeBar.js';
@@ -84,6 +85,23 @@ export interface IPaneCompositeBarOptions {
 	readonly fillExtraContextMenuActions: (actions: IAction[], e?: MouseEvent | GestureEvent) => void;
 	readonly colors: (theme: IColorTheme) => ICompositeBarColors;
 }
+
+/**
+ * Developer-centric view container ids hidden by the Vednon blank chassis when
+ * `product.vednon.hideDeveloperUI` is set. Explorer, Search, Extensions, Settings
+ * and any product/extension containers (e.g. the Artifacts POC) remain visible.
+ */
+const VEDNON_HIDDEN_CONTAINER_IDS = new Set<string>([
+	'terminal',                      // Terminal panel
+	'workbench.view.debug',          // Run & Debug
+	'workbench.panel.repl',          // Debug Console
+	'workbench.view.testing',        // Testing
+	'workbench.panel.testResults',   // Test Results
+	'workbench.panel.markers',       // Problems
+	'workbench.view.scm',            // Source Control
+	'workbench.panel.output',        // Output
+	'workbench.panel.chat',          // Chat
+]);
 
 export class PaneCompositeBar extends Disposable {
 
@@ -434,6 +452,11 @@ export class PaneCompositeBar extends Disposable {
 		const viewContainer = isString(viewContainerOrId) ? this.getViewContainer(viewContainerOrId) : viewContainerOrId;
 		const viewContainerId = isString(viewContainerOrId) ? viewContainerOrId : viewContainerOrId.id;
 
+		// Vednon blank chassis: force developer containers hidden even when cached/pinned in storage.
+		if (product.vednon?.hideDeveloperUI && VEDNON_HIDDEN_CONTAINER_IDS.has(viewContainerId)) {
+			return true;
+		}
+
 		if (viewContainer) {
 			if (viewContainer.hideIfEmpty) {
 				if (this.viewService.isViewContainerActive(viewContainerId)) {
@@ -515,12 +538,22 @@ export class PaneCompositeBar extends Disposable {
 	}
 
 	private getViewContainer(id: string): ViewContainer | undefined {
+		// Vednon blank chassis: treat hidden developer containers as absent (covers cached/pinned restore).
+		if (product.vednon?.hideDeveloperUI && VEDNON_HIDDEN_CONTAINER_IDS.has(id)) {
+			return undefined;
+		}
 		const viewContainer = this.viewDescriptorService.getViewContainerById(id);
 		return viewContainer && this.viewDescriptorService.getViewContainerLocation(viewContainer) === this.location ? viewContainer : undefined;
 	}
 
 	private getViewContainers(): readonly ViewContainer[] {
-		return this.viewDescriptorService.getViewContainersByLocation(this.location);
+		const containers = this.viewDescriptorService.getViewContainersByLocation(this.location);
+		// Vednon blank chassis: hide developer-centric containers from the activity
+		// bar / panel without unregistering them. Reversible via product.vednon.hideDeveloperUI.
+		if (product.vednon?.hideDeveloperUI) {
+			return containers.filter(c => !VEDNON_HIDDEN_CONTAINER_IDS.has(c.id));
+		}
+		return containers;
 	}
 
 	private updateCompositeBarItemsFromStorage(retainExisting: boolean): void {

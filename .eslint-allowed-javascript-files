@@ -163,3 +163,4 @@ test/unit/electron/renderer.js
 test/unit/fullJsonStreamReporter.js
 test/unit/node/index.js
 test/unit/reporter.js
+packages/create-vednon-app/index.js

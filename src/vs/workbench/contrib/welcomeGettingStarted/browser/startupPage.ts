@@ -234,6 +234,10 @@ export class StartupPageRunnerContribution extends Disposable implements IWorkbe
 	}
 
 	private tryShowOnboarding(): void {
+		if (this.productService.vednon?.hideDeveloperUI) {
+			return; // Vednon blank chassis: no Copilot sign-in / onboarding overlay
+		}
+
 		if (this.environmentService.skipWelcome) {
 			return; // skip welcome flag is set
 		}

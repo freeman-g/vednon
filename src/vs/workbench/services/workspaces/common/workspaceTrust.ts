@@ -19,6 +19,7 @@ import { ISingleFolderWorkspaceIdentifier, isSavedWorkspace, isSingleFolderWorks
 import { WorkspaceTrustRequestOptions, IWorkspaceTrustManagementService, IWorkspaceTrustInfo, IWorkspaceTrustUriInfo, IWorkspaceTrustRequestService, IWorkspaceTrustTransitionParticipant, WorkspaceTrustUriResponse, IWorkspaceTrustEnablementService, ResourceTrustRequestOptions } from '../../../../platform/workspace/common/workspaceTrust.js';
 import { Memento } from '../../../common/memento.js';
 import { IWorkbenchEnvironmentService } from '../../environment/common/environmentService.js';
+import product from '../../../../platform/product/common/product.js';
 import { IUriIdentityService } from '../../../../platform/uriIdentity/common/uriIdentity.js';
 import { isEqualAuthority } from '../../../../base/common/resources.js';
 import { isWeb } from '../../../../base/common/platform.js';
@@ -78,6 +79,10 @@ export class WorkspaceTrustEnablementService extends Disposable implements IWork
 	}
 
 	isWorkspaceTrustEnabled(): boolean {
+		if (product.vednon?.hideDeveloperUI) {
+			return false; // Vednon blank chassis: no Restricted Mode / workspace-trust prompts
+		}
+
 		if (this.environmentService.disableWorkspaceTrust) {
 			return false;
 		}

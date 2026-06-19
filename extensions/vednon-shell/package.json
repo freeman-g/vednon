@@ -1,0 +1,60 @@
+{
+  "name": "vednon-shell",
+  "displayName": "Vednon Shell",
+  "description": "Blank-chassis defaults and workspace config for Vednon.",
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "version": "0.1.0",
+  "publisher": "vednon",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "main": "./out/extension",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": true,
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
+  "contributes": {
+    "configurationDefaults": {
+      "workbench.startupEditor": "none",
+      "workbench.tips.enabled": false,
+      "workbench.layoutControl.enabled": false,
+      "workbench.editor.empty.hint": "hidden",
+      "chat.commandCenter.enabled": false,
+      "git.enabled": false,
+      "workbench.activityBar.location": "default"
+    },
+    "commands": [
+      {
+        "command": "vednon.reloadConfig",
+        "title": "Reload Config",
+        "category": "Vednon"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "gulp compile-extension:vednon-shell",
+    "watch": "gulp watch-extension:vednon-shell",
+    "vscode:prepublish": "npm run build-ext",
+    "build-ext": "node ../../node_modules/gulp/bin/gulp.js --gulpfile ../../build/gulpfile.extensions.mjs compile-extension:vednon-shell ./tsconfig.json"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "24.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/vscode.git"
+  }
+}

@@ -92,6 +92,14 @@ export interface IProductConfiguration {
 	readonly nameShort: string;
 	readonly nameLong: string;
 
+	/**
+	 * Vednon blank-chassis configuration. When `hideDeveloperUI` is set, the
+	 * developer-centric view containers (terminal, debug, test, problems, SCM,
+	 * output, chat) are hidden from the activity bar and panel. Reversible: flip
+	 * this flag (or remove it) to restore the full IDE surface.
+	 */
+	readonly vednon?: { readonly hideDeveloperUI?: boolean };
+
 	readonly win32AppUserModelId?: string;
 	readonly win32MutexName?: string;
 	readonly win32SetupMutexName?: string;

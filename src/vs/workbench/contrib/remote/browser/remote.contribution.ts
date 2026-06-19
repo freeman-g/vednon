@@ -5,6 +5,7 @@
 
 import { IWorkbenchContributionsRegistry, WorkbenchPhase, Extensions as WorkbenchExtensions, registerWorkbenchContribution2 } from '../../../common/contributions.js';
 import { Registry } from '../../../../platform/registry/common/platform.js';
+import product from '../../../../platform/product/common/product.js';
 import { ShowCandidateContribution } from './showCandidate.js';
 import { LifecyclePhase } from '../../../services/lifecycle/common/lifecycle.js';
 import { TunnelFactoryContribution } from './tunnelFactory.js';
@@ -17,7 +18,10 @@ const workbenchContributionsRegistry = Registry.as<IWorkbenchContributionsRegist
 registerWorkbenchContribution2(ShowCandidateContribution.ID, ShowCandidateContribution, WorkbenchPhase.BlockRestore);
 registerWorkbenchContribution2(TunnelFactoryContribution.ID, TunnelFactoryContribution, WorkbenchPhase.BlockRestore);
 workbenchContributionsRegistry.registerWorkbenchContribution(RemoteAgentConnectionStatusListener, LifecyclePhase.Eventually);
-registerWorkbenchContribution2(RemoteStatusIndicator.ID, RemoteStatusIndicator, WorkbenchPhase.BlockStartup);
+// Vednon blank chassis: omit the remote/SSH status-bar indicator. Reversible via product.vednon.hideDeveloperUI.
+if (!product.vednon?.hideDeveloperUI) {
+	registerWorkbenchContribution2(RemoteStatusIndicator.ID, RemoteStatusIndicator, WorkbenchPhase.BlockStartup);
+}
 workbenchContributionsRegistry.registerWorkbenchContribution(ForwardedPortsView, LifecyclePhase.Restored);
 workbenchContributionsRegistry.registerWorkbenchContribution(PortRestore, LifecyclePhase.Eventually);
 workbenchContributionsRegistry.registerWorkbenchContribution(AutomaticPortForwarding, LifecyclePhase.Eventually);
